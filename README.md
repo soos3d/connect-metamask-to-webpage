@@ -56,6 +56,6 @@ async function connect() {
 }
 ```
 
-Use this as a base to create your decentrilized application.
+Use this as a base to create your decentralized application.
 
 ![image](https://user-images.githubusercontent.com/99700157/171196725-6e1db369-b210-44fc-b58c-a0bd8faad98b.png)
