@@ -182,10 +182,157 @@ At this point, the HTML file should look like this:
 
 ### Add more functionality
 
-Altough this code allows us to already connect the page to MetaMask, we can add some functionality. For example, promt the user to switch to the network used by our DApp.
+Although this code allows us to already connect the page to MetaMask, we can add some functionality. For example, prompt the user to switch to the network used by our DApp.
+
+In this case, I'll show you how to prompt the user to switch to the Polygon network, and if the network is not configured in the user's MetaMask, prompt to add it. 
+
+We just need a couple of additions. First, add a button above the `connect` button.
+
+```html
+<button onclick="switchNetwork()">Switch to Polygon</button>
+```
+
+This button will call the `switchNetwork()` function, which we'll code in the next step. Also, find the reference code in the [MetaMask docs](https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods)
+
+Inside the `<script>` tag add this function:
+
+```js
+async function switchNetwork() {
+    try {
+
+        // Prompt user to switch to Polygon
+
+        await ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{
+                chainId: '0x89'   // Note that the chainId must be an HEX number starting with 0x. 
+            }],
+        });
+
+    } catch (switchError) {
+
+        // This error code indicates that the chain has not been added to MetaMask.
+
+        if (switchError.code === 4902) {
+            try {
+
+                // Prompt user to add Polygon to MetaMask if not already configured
+
+                await ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [{
+                        chainId: '0x89',
+                        chainName: 'Polygon mainnet',
+                        rpcUrls: ['https://polygon-rpc.com/'] /* ... */ ,
+                    }, ],
+                });
+            } catch (addError) {
+                // handle "add" error
+            }
+        }
+        // handle other "switch" errors
+    }
+}
+```
+When clicking the `Switch to Polygon` button, MetaMask will prompt you to change the network or add it in case you don't have it.
+
+![screely-1662997581591](https://user-images.githubusercontent.com/99700157/189698383-b46609e4-52d9-4728-b24f-fbc4b8a343ab.png)
+
+## Full code
+
+Here is the full HTML file with both buttons and functions.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <title>Connect MetaMask</title>
+</head>
+
+<body>
+    <div class="parent">
+        <div class="div1">
+            <h1 class="center">Connect MetaMask to a webpage</h1>
+            <h2 class="center">This page shows you how to connect MetaMask to a webpage to create a DApp!</h2>
+            <h3 class="center">Check the source code in the <a href="https://github.com/soos3d/connect-metamask-to-webpage" target="_blank">GitHub repo</a>.</h3>
+            <p class="center">Click the button to prompt MetaMask to connect</p>
+        </div>
+
+        <div class="div2">
+            <h3>Click the button to connect MetaMask to the website</h3>
+            <button onclick="switchNetwork()">Switch to Polygon</button>
+            <button onclick="connect()">Connect Wallet</button>
+        </div>
+    </div>
+
+    <script>
+        // Identify the accounts and connect MetaMask to the website.
+        function connect() {
+            ethereum
+                .request({
+                    method: 'eth_requestAccounts'
+                })
+                .then(handleAccountsChanged)
+                .catch((error) => {
+                    if (error.code === 4001) {
+                        // EIP-1193 userRejectedRequest error
+                        console.log('Please connect to MetaMask.');
+                    } else {
+                        console.error(error);
+                    }
+                });
+        }
+
+        async function switchNetwork() {
+            try {
+
+                // Prompt user to switch to Polygon
+
+                await ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{
+                        chainId: '0x89'
+                    }],
+                });
+
+            } catch (switchError) {
+
+                // This error code indicates that the chain has not been added to MetaMask.
+
+                if (switchError.code === 4902) {
+                    try {
+
+                        // Prompt user to add Polygon to MetaMask if not already configured
+
+                        await ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x89',
+                                chainName: 'Polygon mainnet',
+                                rpcUrls: ['https://polygon-rpc.com/'] /* ... */ ,
+                            }, ],
+                        });
+                    } catch (addError) {
+                        // handle "add" error
+                    }
+                }
+                // handle other "switch" errors
+            }
+        }
+    </script>
+
+</body>
+
+</html>
+```
+
+## Conclusion
+
+Congrats on going through this and learning how to work with MetaMask! Use this as a base to create your decentralized application.
 
 
-
-Use this as a base to create your decentralized application.
-
-![image](https://user-images.githubusercontent.com/99700157/171196725-6e1db369-b210-44fc-b58c-a0bd8faad98b.png)
