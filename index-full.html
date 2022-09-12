@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <title>Connect MetaMask</title>
+</head>
+
+<body>
+    <div class="parent">
+        <div class="div1">
+            <h1 class="center">Connect MetaMask to a webpage</h1>
+            <h2 class="center">This page shows you how to connect MetaMask to a webpage to create a DApp!</h2>
+            <h3 class="center">Check the source code in the <a href="https://github.com/soos3d/connect-metamask-to-webpage" target="_blank">GitHub repo</a>.</h3>
+            <p class="center">Click the button to prompt MetaMask to connect</p>
+        </div>
+
+        <div class="div2">
+            <h3>Click the button to connect MetaMask to the website</h3>
+            <button onclick="switchNetwork()">Switch to Polygon</button>
+            <button onclick="connect()">Connect Wallet</button>
+        </div>
+    </div>
+
+    <script>
+        // Identify the accounts and connect MetaMask to the website.
+        function connect() {
+            ethereum
+                .request({
+                    method: 'eth_requestAccounts'
+                })
+                .then(handleAccountsChanged)
+                .catch((error) => {
+                    if (error.code === 4001) {
+                        // EIP-1193 userRejectedRequest error
+                        console.log('Please connect to MetaMask.');
+                    } else {
+                        console.error(error);
+                    }
+                });
+        }
+
+        async function switchNetwork() {
+            try {
+
+                // Prompt user to switch to Polygon
+
+                await ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{
+                        chainId: '0x89'
+                    }],
+                });
+
+            } catch (switchError) {
+
+                // This error code indicates that the chain has not been added to MetaMask.
+
+                if (switchError.code === 4902) {
+                    try {
+
+                        // Prompt user to add Polygon to MetaMask if not already configured
+
+                        await ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x89',
+                                chainName: 'Polygon mainnet',
+                                rpcUrls: ['https://polygon-rpc.com/'] /* ... */ ,
+                            }, ],
+                        });
+                    } catch (addError) {
+                        // handle "add" error
+                    }
+                }
+                // handle other "switch" errors
+            }
+        }
+    </script>
+
+</body>
+
+</html>
