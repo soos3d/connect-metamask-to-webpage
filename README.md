@@ -1,5 +1,6 @@
 # JS code to connect MetaMask to a webpage
-This is the basic JS code needed to connect a webpage to MetaMask, use it to develop your dApp!
+
+This tutorial shows you the basic JS code needed to connect a webpage to MetaMask, use it to develop your dApp!
 
 Serve the webpage and see how it works.
 
