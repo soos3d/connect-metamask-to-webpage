@@ -192,7 +192,7 @@ We just need a couple of additions. First, add a button above the `connect` butt
 <button onclick="switchNetwork()">Switch to Polygon</button>
 ```
 
-This button will call the `switchNetwork()` function, which we'll code in the next step. Also, find the reference code in the [MetaMask docs](https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods)
+This button will call the `switchNetwork()` function, which we'll code in the next step. Also, find the reference code in the [MetaMask docs](https://docs.metamask.io/guide/rpc-api.html#unrestricted-methods).
 
 Inside the `<script>` tag add this function:
 
